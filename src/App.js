@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import { observer, inject } from 'mobx-react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+@inject('toDoStore')
+@observer
+
+class App extends Component {
+
+  state = {
+    input: ""
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.toDoStore.addToDo(this.state.input)
+    this.setState({input: ""})
+  }
+
+  render() {
+
+    const { toDoStore } = this.props
+
+    return (
+      <div>
+        <h1>To Do App</h1>
+        <h2>{toDoStore.todoCount}</h2>
+        <form
+          onSubmit={this.handleSubmit}>
+          <input
+            placeholder="Enter To Do..."
+            onChange={e => this.setState({input: e.target.value})}
+            value={this.state.input}
+          />
+          <button>Submit</button>
+        </form>
+        <ul>
+          {toDoStore.todos.map(el => <li key={el}>{el}</li>)}
+        </ul>
+      </div>
+    );
+  }
 }
 
 export default App;
